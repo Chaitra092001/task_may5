@@ -7,258 +7,160 @@ select * from customer;
 
 1)
 create  proc spcustomerdetails
-
 as
-
 begin
-
 select * from customer
-
 end
-
-
 
 2)
 create proc spcustomerdetails1
-
 as
-
 begin
-
 select * from customer where grade > 100
-
 end
-
-
 
 3)
 create proc spcustomerdetails2
-
 as begin
-
 select grade+300 as incremented_grade from customer 
-
 end
-
-
 
 4)
 create proc spcustomerdetails3
-
 as 
 begin
-
 select CUSTOMER_NAME, name from customer c, salesman s where c.SALESMAN_ID=s.SALESMAN_ID
-
 end
-
-
 
 5)
 create proc spcustomerdetails4
-
 as
-
 begin
-
 select CUSTOMER_NAME, name , grade from customer c, salesman s where c.SALESMAN_ID=s.SALESMAN_ID and grade>=200
-
 end
-
-
-
 
 
 -- sp with input prametrs
 
-
-
 1)
 create proc sporderdetails
-
 @orderid int 
-
 as begin
-
 select order_no, purchase_amount from orders 
 where @orderid= order_no 
-
 end
 
 sporderdetails 70001;
 
-
-
 2)
 create proc sporderdetails1
-
 @orderid int,
 @customerid int
-
 as 
 begin
-
 select order_no, purchase_amount, CUSTOMER_ID from orders 
 where @orderid= order_no  and @customerid=CUSTOMER_ID
-
 end
-
-
 
 sporderdetails1 70001, 3005;
 
-
-
 3)create proc sporderdetails2
-
 @orderid int
-
 as 
 begin
-
 select order_no, purchase_amount+200 as increased_amount from orders 
 where @orderid= order_no
-
 end
-
-
 
 sporderdetails2 70001;
 
-
-
 4)
 create proc sporderdetails3
-
 @orderid int,
 @city varchar(30)
-
 as 
 begin
-
 select order_no, purchase_amount,o.CUSTOMER_ID , city  from orders o, customer c
 where @orderid= order_no and city=@city and o.CUSTOMER_ID=c.CUSTOMER_ID
-
 end
-
-
 
 sporderdetails3 70001, 'new york';
 
-
-
 5)
-
 create proc sporderdetails4
-
 @date date
-
 as 
 begin
 select ORDER_DATE,order_no, purchase_amount, CUSTOMER_ID from orders 
 where @date=ORDER_DATE
-
 end
-
 
 sporderdetails4 '2012-10-05';
 
 
-
 --sp with only output parameter
-
-
 
 1)
 ALTER procedure spCustomerCount
 @customercount int output
 as 
 begin
-
 select @customercount= count(*) from customer 
 
 end
 
 declare  @customercont integer
-
 execute spCustomerCount @customercont output
-
 print @customercont
-
-
-
 
 2)
 ALTER procedure spCustomerCount1
-
 @citycount int output
-
 as 
 begin
-
 select @citycount= count(city) from customer where city='new york'
 end
 
 declare  @customercont1 integer
-
 execute spCustomerCount1 @customercont1 output
-
 print @customercont1
-
-
 
 3)
 ALTER procedure spCustomergrade
-
 @customerid int output
 as 
 begin
-
 select @customerid= count(*) from customer where grade > 100
 end
 
-
 declare  @customergrade integer
-
 execute spCustomergrade @customergrade output
 print @customergrade
 
 
-
 4)
 ALTER procedure spMaxAmount
-
 @max_amt int output
 as 
 begin
-
-select @max_amt= max(PURCHASE_AMOUNT) from orders
- 
+select @max_amt= max(PURCHASE_AMOUNT) from orders 
 end
 
 declare  @customeramt integer
-
 execute spMaxAmount @customeramt output
-
 print  @customeramt
-
 
 
 5)
 ALTER procedure spTotalAmount
-
 @sum int output
-
 as 
 begin
 select @sum= sum(PURCHASE_AMOUNT) from orders 
-
 end
 
 declare  @customeramt1 integer
-
 execute spTotalAmount @customeramt1 output
-
 print  @customeramt1
 
 
@@ -269,107 +171,70 @@ print  @customeramt1
 
 1)
 ALTER procedure spcustomername
-
 @customerid int,
-
 @customer_name varchar(30) output
-
 as 
 begin
-
 select @customer_name= CUSTOMER_NAME from  customer where @customerid=CUSTOMER_ID
-
 end
 
-
-
 declare @customername varchar(30)
-
 exec spcustomername 3001, @customername output
 print @customername
 
 2)
 ALTER procedure sporderamt
-
 @orderid int,
-
 @amount int output
-
-
 as 
 begin
-
 select  @amount = purchase_amount from orders where  @orderid=order_no
-
 end
 
 declare @orderamt int
-
 exec sporderamt 70001, @orderamt output
-
 print @orderamt
 
 3)
 ALTER procedure spOrderId
-
 @customerid int,
-
 @orderid int output
-
 as 
 begin
-
 select @orderid=order_no from orders o, customer c where o.CUSTOMER_ID=c.CUSTOMER_ID
-
 end
 
 
 declare @orderid int
-
 exec  spOrderId 3001,  @orderid output
 print @orderid
 
 
 4)
 ALTER procedure spOrderIdandDate1
-
 @customerid int,
 @orderdate date ,
 @orderid int output
-
-
 as 
 begin
-
 select @orderdate=ORDER_DATE, @orderid=order_no from orders o, customer c where o.CUSTOMER_ID=c.CUSTOMER_ID
-
 end
 
-
 declare @orderid1 int
-
 exec  spOrderIdandDate1 3001, '2012-10-05' , @orderid1 output
-
 print @orderid1
 
 5)
 ALTER procedure spSalesmanName
-
 @customerid int,
-
 @orderdate date,
-
 @salesmanname varchar(30) output
 as 
 begin
-
 select @salesmanname=name from orders o, customer c, salesman s where o.CUSTOMER_ID=c.CUSTOMER_ID and s.SALESMAN_ID=c.SALESMAN_ID
-
 end
 
 
 declare @sname varchar(30)
-
 exec  spSalesmanName 3001, '2012-10-05' , @sname output
-
 print @sname
